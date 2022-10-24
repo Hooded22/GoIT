@@ -1,6 +1,5 @@
 var currentPage = 0;
 var searchPhrase = "";
-var timeout;
 
 const observer = new IntersectionObserver((entries) => {
   if (entries[0].intersectionRatio <= 0 || entries[0].intersectionRect.y === 0)
@@ -9,20 +8,22 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 const searchInput = document.querySelector("[type=text]");
+const form = document.querySelector("form");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (!searchPhrase) {
+    clearList();
+    return;
+  }
+  if (searchPhrase.length < 100) {
+    clearList();
+    getData(searchPhrase);
+  }
+})
 
 searchInput.addEventListener("input", (e) => {
-  window.clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    if (!e.target.value) {
-      clearList();
-      return;
-    }
-    if (e.target.value.length < 100) {
-      searchPhrase = e.target.value;
-      clearList();
-      getData(e.target.value);
-    }
-  }, 300);
+  searchPhrase = e.target.value;
 });
 
 async function getData(searchPhrase) {
